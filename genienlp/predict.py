@@ -36,6 +36,8 @@ import shutil
 from collections import defaultdict
 from pprint import pformat
 
+from parallelformers import parallelize
+
 # multiprocessing with CUDA
 from torch.multiprocessing import Process, set_start_method
 
@@ -228,6 +230,12 @@ def parse_argv(parser):
         help='whether to replace tokens between quotation marks after translation with source values',
     )
 
+    parser.add_argument(
+        '--model_parallel_hf',
+        action='store_true',
+        help='Use model parallelization by spliting model weights across available gpus',
+    )
+
 
 def set_default_values(args):
     """
@@ -359,10 +367,12 @@ def prepare_data_iterators(args, val_sets, numericalizer, device):
     return iters
 
 
-def run(args, device):
+def run(args, devices):
     # TODO handle multiple languages
     src_lang = args.pred_src_languages[0]
     tgt_lang = args.pred_tgt_languages[0]
+
+    device = devices[0]
 
     Model = getattr(models, args.model)
     model, _ = Model.load(
@@ -374,6 +384,9 @@ def run(args, device):
         src_lang=src_lang,
         tgt_lang=tgt_lang,
     )
+
+    if args.model_parallel_hf:
+        model = parallelize(model, num_gpus=len(devices), fp16=args.mixed_precision, verbose='detail')
 
     val_sets = prepare_data(args, device, src_lang)
     model.add_new_vocab_from_data(args.tasks)
@@ -508,30 +521,34 @@ def main(args):
             task.metrics = metrics
 
     if len(devices) > 1:
-        logger.info(f'Independent multi-GPU generation on following devices: {devices}')
-        all_processes = []
-        all_data_folders = split_folder_on_disk(args.data, len(devices))
-        if args.do_ned and args.ned_retrieve_method == 'bootleg':
-            all_bootleg_data_folders = split_folder_on_disk(args.bootleg_output_dir, len(devices))
-
-        for device_id in range(len(devices)):
-            copy_args = copy.copy(args)
-            copy_args.data = all_data_folders[device_id]
+        if args.model_parallel_hf:
+            logger.info(f'Multi device generation on: {devices}')
+            run(args, devices)
+        else:
+            logger.info(f'Independent multi-GPU generation on following devices: {devices}')
+            all_processes = []
+            all_data_folders = split_folder_on_disk(args.data, len(devices))
             if args.do_ned and args.ned_retrieve_method == 'bootleg':
-                copy_args.bootleg_output_dir = all_bootleg_data_folders[device_id]
-            copy_args.eval_dir = get_part_path(args.eval_dir, device_id)
+                all_bootleg_data_folders = split_folder_on_disk(args.bootleg_output_dir, len(devices))
 
-            p = Process(target=run, args=(copy_args, devices[device_id]))
-            all_processes.append(p)
-            p.start()
+            for device_id in range(len(devices)):
+                copy_args = copy.copy(args)
+                copy_args.data = all_data_folders[device_id]
+                if args.do_ned and args.ned_retrieve_method == 'bootleg':
+                    copy_args.bootleg_output_dir = all_bootleg_data_folders[device_id]
+                copy_args.eval_dir = get_part_path(args.eval_dir, device_id)
 
-        for p in all_processes:
-            p.join()
+                p = Process(target=run, args=(copy_args, devices[device_id]))
+                all_processes.append(p)
+                p.start()
 
-        for folder in all_data_folders:
-            shutil.rmtree(folder)
-        combine_folders_on_disk(args.eval_dir, len(devices), line_group_size=1, delete=True)
+            for p in all_processes:
+                p.join()
+
+            for folder in all_data_folders:
+                shutil.rmtree(folder)
+            combine_folders_on_disk(args.eval_dir, len(devices), line_group_size=1, delete=True)
 
     else:
         logger.info(f'Single device generation on: {devices[0]}')
-        run(args, devices[0])
+        run(args, devices)
