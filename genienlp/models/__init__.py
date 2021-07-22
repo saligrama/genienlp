@@ -32,5 +32,6 @@ import logging
 from .transformer_lstm import TransformerLSTM
 from .transformer_seq2seq import TransformerSeq2Seq
 from .transformer_token_classification import TransformerForTokenClassification
+from .transformer_sequence_classification import TransformerForSequenceClassification
 
 logging.getLogger("filelock").setLevel(logging.WARNING)
