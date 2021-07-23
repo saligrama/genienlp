@@ -1929,3 +1929,52 @@ class CrossNERDataset(CQA):
         return Split(train=all_train_data, eval=all_validation_data, test=all_test_data), Split(
             train=train_path, eval=validation_path, test=test_path
         )
+
+
+class OODDataset(CQA):
+    name = 'ood'
+
+    def __init__(self, path, lower=False, cached_path=None, skip_cache=False, **kwargs):
+        examples = []
+        labels = {'neg': 'negative', 'pos': 'positive'}
+        question = 'Is this sentence in-domain or out-domain?'
+
+        cache_name = os.path.join(cached_path, os.path.basename(path))
+        if os.path.exists(cache_name) and not skip_cache:
+            logger.info(f'Loading cached data from {cache_name}')
+            examples = torch.load(cache_name)
+        else:
+            for label in ['pos', 'neg']:
+                for fname in glob.iglob(os.path.join(path, label, '*.tsv')):
+                    with open(fname, 'r') as f:
+                        line = f.readline()
+                        while line:
+                            context = line.split('\t')[2]
+                            answer = labels[label]
+                            examples.append(Example.from_raw(
+                                make_example_id(self, len(examples)),
+                                context,
+                                question,
+                                answer,
+                                lower=lower
+                            ))
+                            line = f.readline()
+
+            os.makedirs(os.path.dirname(cache_name), exist_ok=True)
+            logger.info(f'Caching data to {cache_name}')
+            torch.save(examples, cache_name)
+        super().__init__(examples, **kwargs)
+
+    @classmethod
+    def splits(cls, root='.data', train='train', validation=None, test='test', **kwargs):
+        assert validation is None
+        path = cls.download(root)
+
+        train_data = None if train is None else cls(os.path.join(path, f'{train}'), **kwargs)
+        test_data = None if test is None else cls(os.path.join(path, f'{test}'), **kwargs)
+
+        return Split(
+            train=None if train is None else train_data,
+            eval=None,
+            test=None if test is None else test_data,
+        )
