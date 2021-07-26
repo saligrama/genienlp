@@ -1966,15 +1966,13 @@ class OODDataset(CQA):
         super().__init__(examples, **kwargs)
 
     @classmethod
-    def splits(cls, root='.data', train='train', validation=None, test='test', **kwargs):
-        assert validation is None
-        path = cls.download(root)
-
-        train_data = None if train is None else cls(os.path.join(path, f'{train}'), **kwargs)
-        test_data = None if test is None else cls(os.path.join(path, f'{test}'), **kwargs)
+    def splits(cls, root='.data', train='train', validation='dev', test='test', **kwargs):
+        train_data = None if train is None else cls(os.path.join(root, f'{train}'), **kwargs)
+        validation_data = None if validation is None else cls(os.path.join(root, f'{validation}'), **kwargs)
+        test_data = None if test is None else cls(os.path.join(root, f'{test}'), **kwargs)
 
         return Split(
-            train=None if train is None else train_data,
-            eval=None,
-            test=None if test is None else test_data,
-        )
+            train=train_data,
+            eval=validation_data,
+            test=test_data,
+        ), None

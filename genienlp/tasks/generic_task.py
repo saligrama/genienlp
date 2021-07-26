@@ -383,5 +383,4 @@ class CrossNERTask(BaseAlmondTask):
 @register_task('ood_task')
 class OODTask(BaseTask):
     def get_splits(self, root, **kwargs):
-        kwargs['validation'] = None
         return generic_dataset.OODDataset.splits(root=root, **kwargs)

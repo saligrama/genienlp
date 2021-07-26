@@ -29,7 +29,7 @@
 
 import logging
 
-from transformers import AutoConfig, AutoModelForTokenClassification
+from transformers import AutoConfig, AutoModelForSequenceClassification
 
 from ..data_utils.numericalizer import TransformerNumericalizer
 from ..models.base import GenieModel
