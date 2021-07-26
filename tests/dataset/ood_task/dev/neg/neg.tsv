@@ -1,0 +1,10 @@
+Elog/18538/0	null	hello	$dialogue @org.thingpedia.dialogue.transaction . greet ;
+Elog/21354/0	null	hi	$dialogue @org.thingpedia.dialogue.transaction . greet ;
+Elog/124578/0	null	hi almond	$dialogue @org.thingpedia.dialogue.transaction . greet ;
+Elog/136776/0	null	thank you	$dialogue @org.thingpedia.dialogue.transaction . cancel ;
+Elog/139232/0	null	hola	$dialogue @org.thingpedia.dialogue.transaction . greet ;
+Elog/136440/0	null	hello !	$dialogue @org.thingpedia.dialogue.transaction . greet ;
+Elog/134781/0	null	ciao	$dialogue @org.thingpedia.dialogue.transaction . greet ;
+Elog/17951/0	null	thx	$dialogue @org.thingpedia.dialogue.transaction . cancel ;
+Elog/120219/0	null	hello almond	$dialogue @org.thingpedia.dialogue.transaction . greet ;
+Elog/51709/0	null	hello there	$dialogue @org.thingpedia.dialogue.transaction . greet ;
