@@ -645,25 +645,25 @@ class Translate(NaturalSeq2Seq):
             example_id = batch_example_ids[i // num_outputs]
 
             # shift target tokens left to match the attention positions (since eos_token is prepended not generated)
-            if tgt_tokens[0] in tokenizer.all_special_tokens:
+            if tgt_tokens and tgt_tokens[0] in tokenizer.all_special_tokens:
                 tgt_tokens = tgt_tokens[1:]
 
             # remove all beginning special tokens from target and shift attention too
-            while tgt_tokens[0] in tokenizer.all_special_tokens:
+            while tgt_tokens and tgt_tokens[0] in tokenizer.all_special_tokens:
                 tgt_tokens = tgt_tokens[1:]
                 cross_att = cross_att[1:, :]
 
             # remove all beginning special tokens from source and shift attention too
-            while src_tokens[0] in tokenizer.all_special_tokens:
+            while src_tokens and src_tokens[0] in tokenizer.all_special_tokens:
                 src_tokens = src_tokens[1:]
                 cross_att = cross_att[:, 1:]
 
             # remove all trailing special tokens from source
-            while src_tokens[-1] in tokenizer.all_special_tokens:
+            while src_tokens and src_tokens[-1] in tokenizer.all_special_tokens:
                 src_tokens = src_tokens[:-1]
 
             # remove all trailing special tokens from target
-            while tgt_tokens[-1] in tokenizer.all_special_tokens:
+            while tgt_tokens and tgt_tokens[-1] in tokenizer.all_special_tokens:
                 tgt_tokens = tgt_tokens[:-1]
 
             # crop to match src and tgt new lengths
