@@ -1933,10 +1933,11 @@ class CrossNERDataset(CQA):
 
 class OODDataset(CQA):
     name = 'ood'
+    is_sequence_classification = True
 
     def __init__(self, path, lower=False, cached_path=None, skip_cache=False, **kwargs):
         examples = []
-        labels = {'neg': 'negative', 'pos': 'positive'}
+        labels = {'neg': '0', 'pos': '1'}
         question = 'Is this sentence in-domain or out-domain?'
 
         cache_name = os.path.join(cached_path, os.path.basename(path))
@@ -1951,13 +1952,9 @@ class OODDataset(CQA):
                         while line:
                             context = line.split('\t')[2]
                             answer = labels[label]
-                            examples.append(Example.from_raw(
-                                make_example_id(self, len(examples)),
-                                context,
-                                question,
-                                answer,
-                                lower=lower
-                            ))
+                            examples.append(
+                                Example.from_raw(make_example_id(self, len(examples)), context, question, answer, lower=lower)
+                            )
                             line = f.readline()
 
             os.makedirs(os.path.dirname(cache_name), exist_ok=True)
@@ -1971,8 +1968,11 @@ class OODDataset(CQA):
         validation_data = None if validation is None else cls(os.path.join(root, f'{validation}'), **kwargs)
         test_data = None if test is None else cls(os.path.join(root, f'{test}'), **kwargs)
 
-        return Split(
-            train=train_data,
-            eval=validation_data,
-            test=test_data,
-        ), None
+        return (
+            Split(
+                train=train_data,
+                eval=validation_data,
+                test=test_data,
+            ),
+            None,
+        )

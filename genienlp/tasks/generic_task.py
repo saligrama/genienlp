@@ -382,5 +382,9 @@ class CrossNERTask(BaseAlmondTask):
 
 @register_task('ood_task')
 class OODTask(BaseTask):
+    def __init__(self, name, args):
+        self.num_labels = 2
+        super().__init__(name, args)
+
     def get_splits(self, root, **kwargs):
         return generic_dataset.OODDataset.splits(root=root, **kwargs)
