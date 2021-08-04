@@ -311,6 +311,7 @@ def main(args):
     args.ned_retrieve_method = 'bootleg'
     args.override_context = None
     args.override_question = None
+    args.almond_type_mapping_path = None
 
     # set these so we can use post_parse_general for train and run_bootleg
     args.val_task_names = None
