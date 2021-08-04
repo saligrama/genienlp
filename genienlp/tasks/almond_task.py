@@ -122,18 +122,8 @@ class BaseAlmondTask(BaseTask):
 
     def preprocess_field(self, sentence, field_name=None, answer=None, example_id=None, preprocess_entities=True):
         if self.override_context is not None and field_name == 'context':
-            # pad_feature = Entity.get_pad_entity(self.args.max_features_size)
-            # return (
-            #     self.override_context,
-            #     [pad_feature] * len(self.override_context.split(' ')) if pad_feature else [],
-            # )
             return self.override_context
         if self.override_question is not None and field_name == 'question':
-            # pad_feature = Entity.get_pad_entity(self.args.max_features_size)
-            # return (
-            #     self.override_question,
-            #     [pad_feature] * len(self.override_question.split(' ')) if pad_feature else [],
-            # )
             return self.override_question
         if not sentence:
             return ''

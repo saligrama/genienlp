@@ -99,7 +99,7 @@ class TransformerNumericalizer(object):
 
     _special_tokens_to_word_map: List[Tuple[str, str]]
     _special_tokens_to_word_regexes: List[Tuple[re.Pattern, str]]
-    _special_tokens_to_token_regexes: List[Tuple[re.Pattern, str]]
+    _words_to_special_token_regexes: List[Tuple[re.Pattern, str]]
 
     def __init__(
         self, pretrained_tokenizer, args, max_generative_vocab, config, src_lang, tgt_lang, vocab_sets, tasks, save_dir=None
@@ -115,12 +115,12 @@ class TransformerNumericalizer(object):
 
         self._preprocess_special_tokens = args.preprocess_special_tokens
 
-        # map a token to a space-separated sequence of words
+        # map a special token to a space-separated sequence of words
         self._special_tokens_to_word_map = []
         # same, but the token is a regular expression matching that token using \b
         self._special_tokens_to_word_regexes = []
-        # map a space-separated sequence of words to a token
-        self._special_tokens_to_token_regexes = []
+        # map a space-separated sequence of words to a special token matching that sequence of words using regex
+        self._words_to_special_token_regexes = []
 
         self.args = args
 
@@ -271,7 +271,7 @@ class TransformerNumericalizer(object):
             self._tokenizer.add_tokens(['<e>', '</e>'])
 
         # add special tokens for ambig_qa task
-        if self.args.train_task_names == 'ambig_qa':
+        if any(task.name == 'ambig_qa' for task in tasks):
             self._tokenizer.add_tokens(['<q>', '<p>', '<u>'])
 
         existing_special_tokens = self._tokenizer.special_tokens_map
@@ -406,10 +406,10 @@ class TransformerNumericalizer(object):
         for token, words in self._special_tokens_to_word_map:
             # match requiring (at the beginning of the string or preceded by a space (positive lookbehind))
             # and (at the end of the string or followed by a space (positive lookahead))
-            word_re = re.compile("(^|(?<= ))" + re.escape(words) + "($|(?= ))")
-            self._special_tokens_to_token_regexes.append((word_re, token))
             token_re = re.compile("(^|(?<= ))" + re.escape(token) + "(^|(?= ))")
             self._special_tokens_to_word_regexes.append((token_re, words))
+            word_re = re.compile("(^|(?<= ))" + re.escape(words) + "($|(?= ))")
+            self._words_to_special_token_regexes.append((word_re, token))
 
     def _init_token_ids(self):
         self.pad_first = self._tokenizer.padding_side == 'left'
@@ -760,10 +760,15 @@ class TransformerNumericalizer(object):
                     index2expansion[tokens_before_idx] = len(replacement.split(' '))
         for i, (regex, replacement) in enumerate(self._special_tokens_to_word_regexes):
             sentence = regex.sub(replacement, sentence)
+        # '^^' will get an unknown id by T5 tokenizer and will break the preprocessing, replace it with a known token
+        if isinstance(self._tokenizer, (T5Tokenizer, T5TokenizerFast)):
+            sentence = sentence.replace('^^', '@@')
         return sentence, index2expansion
 
     def _undo_special_token_preprocessing(self, sentence):
-        for regex, replacement in self._special_tokens_to_token_regexes:
+        if isinstance(self._tokenizer, (T5Tokenizer, T5TokenizerFast)):
+            sentence = sentence.replace('@@', '^^')
+        for regex, replacement in self._words_to_special_token_regexes:
             sentence = regex.sub(replacement, sentence)
         return sentence
 
