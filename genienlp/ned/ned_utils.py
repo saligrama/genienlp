@@ -282,17 +282,19 @@ def init_ned_model(args, ned_class_name=None):
     if args.do_ned:
         if ned_class_name is None:
             if args.ned_class_name == 'bootleg':
-                ned_class_name = 'Bootleg'
+                ned_class_name = 'BatchBootlegEntityDisambiguator'
             elif args.ned_class_name == 'bootleg-annotator':
-                ned_class_name = 'BootlegAnnotator'
+                ned_class_name = 'ServingBootlegEntityDisambiguator'
             elif args.ned_class_name == 'naive':
-                ned_class_name = 'NaiveEntityLinker'
-            elif args.ned_class_name == 'type-oracle':
-                ned_class_name = 'TypeOracleEntityLinker'
+                ned_class_name = 'NaiveEntityDisambiguator'
             elif args.ned_class_name == 'entity-oracle':
-                ned_class_name = 'EntityOracleEntityLinker'
+                ned_class_name = 'EntityOracleEntityDisambiguator'
+            elif args.ned_class_name == 'type-oracle':
+                ned_class_name = 'TypeOracleEntityDisambiguator'
             else:
-                raise ValueError('Invalid ned_class_name')
+                raise ValueError(
+                    'Invalid ned_class_name. Please choose between bootleg, naive, entity-oracle, and type-oracle'
+                )
         ned_class = getattr(ned, ned_class_name)
         ned_model = ned_class(args)
     return ned_model
