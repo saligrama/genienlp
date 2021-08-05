@@ -283,7 +283,7 @@ def bootleg_dump_entities(args, logger):
 def main(args):
 
     args.do_ned = True
-    args.ned_retrieve_method = 'bootleg'
+    args.ned_class_name = 'bootleg'
     args.override_context = None
     args.override_question = None
     args.almond_type_mapping_path = None

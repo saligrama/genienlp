@@ -149,7 +149,7 @@ It will also generate several files in <results_temp> folder. In `eval_bootleg/[
 
 Now you can use the extracted features from bootleg in downstream tasks such as semantic parsing to improve named entity understanding and consequently generation:
 ```bash
-genienlp train --train_tasks <train_task_names> --train_iterations <iterations> --preserve_case --save <savedir> --data <dataset_dir> --model TransformerSeq2Seq --pretrained_model facebook/bart-base --train_batch_tokens 1000 --val_batch_size 1000 --do_ned --database_dir <database_dir> --ned_retrieve_method bootleg --entity_attributes type_id type_prob --add_entities_to_text append --bootleg_model <bootleg_model>
+genienlp train --train_tasks <train_task_names> --train_iterations <iterations> --preserve_case --save <savedir> --data <dataset_dir> --model TransformerSeq2Seq --pretrained_model facebook/bart-base --train_batch_tokens 1000 --val_batch_size 1000 --do_ned --database_dir <database_dir> --ned_class_name bootleg --entity_attributes type_id type_prob --add_entities_to_text append --bootleg_model <bootleg_model>
 ```
 
 

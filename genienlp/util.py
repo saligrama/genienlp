@@ -783,7 +783,7 @@ def load_config_json(args):
             'entity_word_embeds_dropout',
             'num_db_types',
             'db_unk_id',
-            'ned_retrieve_method',
+            'ned_class_name',
             'database_lookup_method',
             'ned_domains',
             'almond_type_mapping_path',
@@ -859,7 +859,7 @@ def load_config_json(args):
                 setattr(args, r, 2)
             elif r == 'max_entity_len':
                 setattr(args, r, 4)
-            elif r == 'ned_retrieve_method':
+            elif r == 'ned_class_name':
                 setattr(args, r, 'naive')
             elif r == 'database_lookup_method':
                 setattr(args, r, 'ngrams')

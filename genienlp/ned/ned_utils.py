@@ -281,18 +281,18 @@ def init_ned_model(args, ned_class_name=None):
     ned_model = None
     if args.do_ned:
         if ned_class_name is None:
-            if args.ned_retrieve_method == 'bootleg':
+            if args.ned_class_name == 'bootleg':
                 ned_class_name = 'Bootleg'
-            elif args.ned_retrieve_method == 'bootleg-annotator':
+            elif args.ned_class_name == 'bootleg-annotator':
                 ned_class_name = 'BootlegAnnotator'
-            elif args.ned_retrieve_method == 'naive':
+            elif args.ned_class_name == 'naive':
                 ned_class_name = 'NaiveEntityLinker'
-            elif args.ned_retrieve_method == 'type-oracle':
+            elif args.ned_class_name == 'type-oracle':
                 ned_class_name = 'TypeOracleEntityLinker'
-            elif args.ned_retrieve_method == 'entity-oracle':
+            elif args.ned_class_name == 'entity-oracle':
                 ned_class_name = 'EntityOracleEntityLinker'
             else:
-                raise ValueError('Invalid ned_retrieve_method')
+                raise ValueError('Invalid ned_class_name')
         ned_class = getattr(ned, ned_class_name)
         ned_model = ned_class(args)
     return ned_model

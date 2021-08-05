@@ -253,7 +253,7 @@ def check_args(args):
             'Use None for single language tasks. Also provide languages in the same order you provided the tasks.'
         )
 
-    if getattr(args, 'do_ned', False) and getattr(args, 'ned_retrieve_method', None) == 'bootleg':
+    if getattr(args, 'do_ned', False) and getattr(args, 'ned_class_name', None) == 'bootleg':
         with open(os.path.join(args.path, 'config.json')) as config_file:
             config = json.load(config_file)
         if args.subsample > config['subsample']:
@@ -317,9 +317,9 @@ def prepare_data(args, device, src_lang):
 
             file_name = os.path.basename(path.rsplit('.', 1)[0])
             if (
-                args.ned_retrieve_method == 'bootleg'
+                args.ned_class_name == 'bootleg'
                 and os.path.exists(f'{args.bootleg_output_dir}/{file_name}_bootleg/bootleg_wiki/bootleg_labels.jsonl')
-            ) or (args.ned_retrieve_method != 'bootleg'):
+            ) or (args.ned_class_name != 'bootleg'):
                 ned_model = init_ned_model(args)
             else:
                 ned_model = init_ned_model(args, 'bootleg-annotator')
@@ -522,13 +522,13 @@ def main(args):
         logger.info(f'Independent multi-GPU generation on following devices: {devices}')
         all_processes = []
         all_data_folders = split_folder_on_disk(args.data, len(devices))
-        if args.do_ned and args.ned_retrieve_method == 'bootleg':
+        if args.do_ned and args.ned_class_name == 'bootleg':
             all_bootleg_data_folders = split_folder_on_disk(args.bootleg_output_dir, len(devices))
 
         for device_id in range(len(devices)):
             copy_args = copy.copy(args)
             copy_args.data = all_data_folders[device_id]
-            if args.do_ned and args.ned_retrieve_method == 'bootleg':
+            if args.do_ned and args.ned_class_name == 'bootleg':
                 copy_args.bootleg_output_dir = all_bootleg_data_folders[device_id]
             copy_args.eval_dir = get_part_path(args.eval_dir, device_id)
 
