@@ -157,6 +157,10 @@ class BatchBootlegEntityDisambiguator(AbstractEntityDisambiguator):
         type_probs = []
         qids = []
 
+        packed_list = zip(all_probs, all_qids)
+        packed_list_sorted = sorted(packed_list, key=lambda item: item[0], reverse=True)
+        all_probs, all_qids = list(zip(*packed_list_sorted))
+
         # filter qids with probability lower than a threshold
         idx = reverse_bisect_left(all_probs, self.args.bootleg_prob_threshold)
         all_qids = all_qids[:idx]
