@@ -5,13 +5,13 @@
 i=0
 # test NED
 for hparams in \
-      "--model TransformerSeq2Seq --pretrained_model sshleifer/bart-tiny-random --ned_class_name bootleg --database_lookup_method ngrams --ned_domains thingpedia --bootleg_model bootleg_uncased_mini --add_entities_to_text append --bootleg_post_process_types --ned_dump_entity_type_pairs" \
-      "--model TransformerSeq2Seq --pretrained_model sshleifer/bart-tiny-random --ned_class_name bootleg --database_lookup_method ngrams --ned_domains thingpedia --bootleg_model bootleg_uncased_mini --add_entities_to_text no --bootleg_post_process_types" \
+      "--model TransformerSeq2Seq --pretrained_model sshleifer/bart-tiny-random --ned_class_name bootleg --database_lookup_method ngrams --ned_domains thingpedia --bootleg_model bootleg_uncased_mini --add_entities_to_text append --ned_normalize_types --ned_dump_entity_type_pairs" \
+      "--model TransformerSeq2Seq --pretrained_model sshleifer/bart-tiny-random --ned_class_name bootleg --database_lookup_method ngrams --ned_domains thingpedia --bootleg_model bootleg_uncased_mini --add_entities_to_text no --ned_normalize_types" \
       "--model TransformerSeq2Seq --pretrained_model sshleifer/bart-tiny-random --ned_class_name naive --database_lookup_method ngrams --ned_domains thingpedia --add_entities_to_text insert" \
       "--model TransformerSeq2Seq --pretrained_model sshleifer/bart-tiny-random --ned_class_name entity-oracle --database_lookup_method ngrams --ned_domains thingpedia --add_entities_to_text insert --ned_dump_entity_type_pairs" \
       "--model TransformerSeq2Seq --pretrained_model sshleifer/bart-tiny-random --ned_class_name type-oracle --database_lookup_method ngrams --ned_domains thingpedia --add_entities_to_text insert" \
-      "--model TransformerLSTM --pretrained_model bert-base-cased --ned_class_name bootleg --database_lookup_method ngrams --ned_domains thingpedia --bootleg_model bootleg_uncased_mini --add_entities_to_text no --bootleg_post_process_types" \
-      "--model TransformerLSTM --pretrained_model bert-base-cased --ned_class_name bootleg --database_lookup_method ngrams --ned_domains thingpedia --bootleg_model bootleg_uncased_mini --add_entities_to_text append --bootleg_post_process_types --override_context ." ;
+      "--model TransformerLSTM --pretrained_model bert-base-cased --ned_class_name bootleg --database_lookup_method ngrams --ned_domains thingpedia --bootleg_model bootleg_uncased_mini --add_entities_to_text no --ned_normalize_types" \
+      "--model TransformerLSTM --pretrained_model bert-base-cased --ned_class_name bootleg --database_lookup_method ngrams --ned_domains thingpedia --bootleg_model bootleg_uncased_mini --add_entities_to_text append --ned_normalize_types --override_context ." ;
 do
 
     # train
