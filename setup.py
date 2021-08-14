@@ -53,7 +53,7 @@ setuptools.setup(
         'bert-score~=0.3',
         'requests~=2.22',
         'num2words>=0.5.10',
-        'datasets==1.11.0',
+        'datasets @ git+https://github.com/huggingface/datasets@da58e65f3937830876b892eb381addce7f52ee3a',
         'seqeval==1.2.2',
         'transformers==4.9.1',
         'sentencepiece==0.1.*',
