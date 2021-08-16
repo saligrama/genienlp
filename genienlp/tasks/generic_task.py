@@ -651,3 +651,6 @@ class AmazonSupportTask(BaseTask):
     @property
     def metrics(self):
         return ['em']
+
+    def get_splits(self, root, **kwargs):
+        return AmazonSupportDataset.splits(root=root, **kwargs)

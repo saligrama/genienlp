@@ -1978,7 +1978,7 @@ class AmazonSupportDataset(CQA):
         examples = []
         question = 'What support category does this inquiry belong to?'
 
-        dataset = load_dataset('csv', data_files=path, delimiter=',', column_names=['cust_tweet', 'support_tweet', 'link', 'label'])
+        dataset = load_dataset('csv', data_files=path, delimiter=',', column_names=['cust_tweet', 'label'])
         dataset = dataset['train']
 
         for data in dataset:
