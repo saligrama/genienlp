@@ -1968,3 +1968,41 @@ class OODDataset(CQA):
             ),
             Split(train=train_path, eval=validation_path, test=test_path),
         )
+
+
+class AmazonSupportDataset(CQA):
+    name = 'amazon_support'
+    is_sequence_classification = True
+
+    def __init__(self, path, lower=False, cached_path=None, skip_cache=False, **kwargs):
+        examples = []
+        question = 'What support category does this inquiry belong to?'
+
+        dataset = load_dataset('csv', data_files=path, delimiter=',', column_names=['cust_tweet', 'support_tweet', 'link', 'label'])
+        dataset = dataset['train']
+
+        for data in dataset:
+            context = data['cust_tweet']
+            answer = data['label'].strip().rstrip()
+            examples.append(Example.from_raw(make_example_id(self, len(examples)), context, question, answer, lower=lower))
+
+        super().__init__(examples, **kwargs)
+
+    @classmethod
+    def splits(cls, root='.data', train='train', validation='eval', test='test', **kwargs):
+        train_path = None if train is None else os.path.join(root, f'{train}.csv')
+        validation_path = None if validation is None else os.path.join(root, f'{validation}.csv')
+        test_path = None if test is None else os.path.join(root, f'{test}.csv')
+
+        train_data = None if train is None else cls(train_path, **kwargs)
+        validation_data = None if validation is None else cls(validation_path, **kwargs)
+        test_data = None if test is None else cls(test_path, **kwargs)
+
+        return (
+            Split(
+                train=train_data,
+                eval=validation_data,
+                test=test_data,
+            ),
+            Split(train=train_path, eval=validation_path, test=test_path),
+        )
