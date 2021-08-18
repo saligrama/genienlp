@@ -33,7 +33,7 @@ from ..data_utils.example import Example
 from . import generic_dataset
 from .almond_task import BaseAlmondTask
 from .base_task import BaseTask
-from .generic_dataset import CrossNERDataset, OODDataset
+from .generic_dataset import CrossNERDataset, OODDataset, AmazonSupportDataset
 from .registry import register_task
 
 
