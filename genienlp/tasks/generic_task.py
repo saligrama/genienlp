@@ -646,7 +646,7 @@ class AmazonSupportTask(BaseTask):
             "contact a third-party seller"
         ]
         self.num_labels = len(self.id2label)
-        super().__init__(self, name, args)
+        super().__init__(name, args)
 
     @property
     def metrics(self):
