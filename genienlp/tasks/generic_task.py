@@ -398,7 +398,7 @@ class OODTask(BaseTask):
 class AmazonSupportTask(BaseTask):
     def __init__(self, name, args):
         self.id2label = [
-            "",
+            "empty_label",
             "order with release-date delivery",
             "learn how to use your send to kindle email address",
             "change your alexa device location",
