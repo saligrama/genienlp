@@ -1983,7 +1983,7 @@ class AmazonSupportDataset(CQA):
 
         for data in dataset:
             context = data['cust_tweet']
-            answer = data['label'].strip().rstrip()
+            answer = data['label'].strip().rstrip() if len(data['label']) > 0 else 'empty_label'
             examples.append(Example.from_raw(make_example_id(self, len(examples)), context, question, answer, lower=lower))
 
         super().__init__(examples, **kwargs)
